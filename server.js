@@ -14,8 +14,8 @@ const app = express();
 app.use(cors());
 
 async function contextualProofread(text) {
-    const apiKey = '###'; // Replace with your Bing API Key
-    const endpoint = 'https://api.bing.microsoft.com/'; // Replace with your Bing API Endpoint
+    const apiKey = '914f67dcba874566ab43525560bf103c'; // Replace with your Bing API Key
+    const endpoint = 'https://api.bing.microsoft.com/v7.0/spellcheck/'; // Updated endpoint
 
     try {
         const params = new URLSearchParams({ 
@@ -29,10 +29,22 @@ async function contextualProofread(text) {
         };
 
         const response = await axios.post(endpoint, params.toString(), { headers });
-        
-        // Process the response here
-        // The response format will depend on the API documentation
-        return response.data;
+
+        // Process the response
+        const flaggedTokens = response.data.flaggedTokens;
+        let correctedText = text;
+
+        // Apply each correction
+        flaggedTokens.forEach(token => {
+            let replacement = token.suggestions[0].suggestion; // Using the top suggestion
+            if (token.type === "RepeatedToken" && replacement === "") {
+                // Handle repeated token case
+                replacement = " "; // Replace with a single space
+            }
+            correctedText = applyCorrection(correctedText, token.offset, token.token, replacement);
+        });
+
+        return correctedText;
     } catch (error) {
         console.error('Error calling Bing Spell Check API:', error);
         return text; // Fallback to original text or basic spell checking
@@ -44,11 +56,9 @@ async function proofreadText(text) {
     let sentences = sentenceTokenizer.tokenize(text);
 
     const proofreadSentences = await Promise.all(sentences.map(async (sentence, index) => {
-        const response = await contextualProofread(sentence);
-        
-        // Process the response to apply corrections and record changes
-        // Simplified example: Adjust according to the actual API response format
-        let correctedSentence = response.correctedText; // Assuming the API returns the corrected sentence
+        const correctedSentence = await contextualProofread(sentence); // Directly using the response
+        console.log("Original Sentence: ", sentence);
+        console.log("Corrected Sentence: ", correctedSentence);
         if (correctedSentence !== sentence) {
             changes.push(`Sentence ${index + 1} corrected.`);
         }
@@ -60,6 +70,15 @@ async function proofreadText(text) {
         changes: changes
     };
 }
+
+function applyCorrection(text, offset, original, replacement) {
+    console.log("Original Text: ", text);
+    console.log("Replacement: ", replacement);
+    const correctedText = text.substring(0, offset) + replacement + text.substring(offset + original.length);
+    console.log("Corrected Text: ", correctedText);
+    return correctedText;
+}
+
 
 app.post('/upload', upload.single('file'), async (req, res) => {
     const file = req.file;

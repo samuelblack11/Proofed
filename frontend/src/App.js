@@ -108,33 +108,60 @@ function App() {
     setDragging(false);
   }, []);
 
-  const handleUpload = async () => {
-    setIsLoading(true);
+const handleUpload = async () => {
+  try {
+  console.log('handleUpload triggered')
+  setIsLoading(true);
+}
+catch(error) {
+  console.error('Error in handleUpload:', error)
+}
 
-    const formData = new FormData();
-    formData.append('file', file);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    try {
-      const response = await fetch('http://localhost:3000/upload', {
-        method: 'POST',
-        body: formData,
-      });
+  try {
+    const response = await fetch('http://localhost:3000/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    console.log('Response Status:', response.status); // Log the status code
+    console.log('Response Status Text:', response.statusText); // Log the status text
+
+    const result = await response.json(); // Attempt to read the response body
+    console.log('Response Body:', result); // Log the response body
+
+    if (response.ok) {
       const result = await response.json();
+      console.log('Response from server:', result); // Debugging the response
 
-      const proofreadBlob = new Blob([result.proofreadText], { type: 'text/plain' });
-      const proofreadUrl = URL.createObjectURL(proofreadBlob);
+      if (result.proofreadText && result.changes) {
+        const proofreadBlob = new Blob([result.proofreadText], { type: 'text/plain' });
+        const proofreadUrl = URL.createObjectURL(proofreadBlob);
+        console.log('Proofread URL:', proofreadUrl); // Debugging the URL
 
-      const changesBlob = new Blob([result.changes.join('\n')], { type: 'text/plain' });
-      const changesUrl = URL.createObjectURL(changesBlob);
+        const changesBlob = new Blob([result.changes.join('\n')], { type: 'text/plain' });
+        const changesUrl = URL.createObjectURL(changesBlob);
+        console.log('Changes URL:', changesUrl); // Debugging the URL
 
-      setProofreadFileUrl(proofreadUrl);
-      setChangesFileUrl(changesUrl);
-    } catch (error) {
-      console.error('Error uploading file:', error);
+        setProofreadFileUrl(proofreadUrl);
+        setChangesFileUrl(changesUrl);
+        setIsUploaded(true);
+      } else {
+        console.error('Missing data in response');
+        setIsUploaded(false);
+      }
+    } else {
+      console.error('Error response from server:', response.status);
+      setIsUploaded(false);
     }
-    setIsLoading(false);
-    setIsUploaded(true);
-  };
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    setIsUploaded(false);
+  }
+  setIsLoading(false);
+};
 
   return (
     <div style={{
