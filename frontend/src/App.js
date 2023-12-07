@@ -20,14 +20,16 @@ function App() {
     fileInputRef.current.value = ''; // Reset the file input
   };
 
-  const handleFileChange = event => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-    setFileName(selectedFile ? selectedFile.name : '');
-    setIsUploaded(false);
-    setProofreadFileUrl('');
-    setChangesFileUrl('');
-  };
+const handleFileChange = event => {
+  const selectedFile = event.target.files[0];
+  console.log('Selected file:', selectedFile); // Add this line to log the selected file
+  setFile(selectedFile);
+  setFileName(selectedFile ? selectedFile.name : '');
+  setIsUploaded(false);
+  setProofreadFileUrl('');
+  setChangesFileUrl('');
+};
+
 
   const dropAreaStyle = {
     border: '2px dashed white',
@@ -109,13 +111,9 @@ function App() {
   }, []);
 
 const handleUpload = async () => {
-  try {
-  console.log('handleUpload triggered')
+  console.log("---------");
+  console.log('handleUpload triggered');
   setIsLoading(true);
-}
-catch(error) {
-  console.error('Error in handleUpload:', error)
-}
 
   const formData = new FormData();
   formData.append('file', file);
@@ -129,38 +127,41 @@ catch(error) {
     console.log('Response Status:', response.status); // Log the status code
     console.log('Response Status Text:', response.statusText); // Log the status text
 
-    const result = await response.json(); // Attempt to read the response body
-    console.log('Response Body:', result); // Log the response body
+    if (!response.ok) {
+      throw new Error(`Server responded with status: ${response.status}`);
+    }
 
-    if (response.ok) {
-      const result = await response.json();
-      console.log('Response from server:', result); // Debugging the response
+    const result = await response.json(); // Read the response body
+    console.log('Response from server:', result); // Debugging the response
 
-      if (result.proofreadText && result.changes) {
-        const proofreadBlob = new Blob([result.proofreadText], { type: 'text/plain' });
-        const proofreadUrl = URL.createObjectURL(proofreadBlob);
-        console.log('Proofread URL:', proofreadUrl); // Debugging the URL
+    if (result.filePath && result.changes) {
+      // Assuming result.filePath contains the relative path to the proofread file
+      const proofreadUrl = `${window.location.origin}/${result.filePath}`;
+      const changesBlob = new Blob([result.changes.join('\n')], { type: 'text/plain' });
+      const changesUrl = URL.createObjectURL(changesBlob);
 
-        const changesBlob = new Blob([result.changes.join('\n')], { type: 'text/plain' });
-        const changesUrl = URL.createObjectURL(changesBlob);
-        console.log('Changes URL:', changesUrl); // Debugging the URL
+      console.log('Proofread URL:', proofreadUrl); // Debugging the URL
+      console.log('Changes URL:', changesUrl); // Debugging the URL
 
-        setProofreadFileUrl(proofreadUrl);
-        setChangesFileUrl(changesUrl);
-        setIsUploaded(true);
-      } else {
-        console.error('Missing data in response');
-        setIsUploaded(false);
-      }
+      setProofreadFileUrl(proofreadUrl);
+      setChangesFileUrl(changesUrl);
+      setIsUploaded(true);
     } else {
-      console.error('Error response from server:', response.status);
+      console.error('Missing data in response');
       setIsUploaded(false);
     }
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Error during file upload:', error);
     setIsUploaded(false);
   }
+
   setIsLoading(false);
+};
+
+
+
+const testFunction = () => {
+  console.log('Test function called');
 };
 
   return (
@@ -198,16 +199,14 @@ catch(error) {
             Choose File
           </label>
           <input ref={fileInputRef} id="fileInput" type="file" onChange={handleFileChange} style={{ display: 'none', width: 0, height: 0 }}/>
-          <button onClick={handleUpload} disabled={!file || isUploaded} style={!file || isUploaded ? disabledButtonStyle : buttonStyle}>
+         <button onClick={handleUpload} disabled={!file || isUploaded} style={!file || isUploaded ? disabledButtonStyle : buttonStyle}>
             Upload File
           </button>
-
           <button onClick={handleReset} disabled={!file} style={!file ? disabledResetButtonStyle : resetButtonStyle}>
             Reset
           </button>
         </div>
       </div>
-
       {isLoading && (
         <div style={{ margin: '20px' }}>
           <div className="spinner"></div>

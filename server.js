@@ -100,11 +100,16 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
         // Proofreading the extracted text
         const result = await proofreadText(text);
-        
+        console.log('TESTING.....')
         // Saving the proofread text as a .txt file
+        console.log({file})
         const outputFilePath = `uploads/proofread_${file.originalname}.txt`;
         fs.writeFileSync(outputFilePath, result.proofreadText);
-
+        console.log("Sending response:", { 
+        fileType: 'txt', 
+        filePath: outputFilePath, 
+        changes: result.changes 
+        });
         res.send({ 
             fileType: 'txt', 
             filePath: outputFilePath, 
