@@ -30,63 +30,6 @@ const handleFileChange = event => {
   setChangesFileUrl('');
 };
 
-
-  const dropAreaStyle = {
-    border: '2px dashed white',
-    padding: '20px',
-    margin: '20px',
-    marginBottom: '10px',
-    borderRadius: '10px',
-    backgroundColor: dragging ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-    width: '60vw',
-    height: '60vh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-  };
-
-  const buttonStyle = {
-    backgroundColor: 'white',
-    color: 'navy',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    margin: '10px',
-    width: '150px',
-    height: '40px'
-  };
-
-  const resetButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#CC0000',
-  };
-
-  const disabledResetButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#ffcccc',
-    color: '#a0a0a0',
-    cursor: 'not-allowed',
-  };
-
-  const disabledButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#ccc',
-    color: 'darkgrey',
-    cursor: 'not-allowed',
-  };
-
-  const labelStyle = {
-    ...buttonStyle,
-    display: 'inline-flex', // Use flex to center the content
-    alignItems: 'center', // Align items vertically
-    justifyContent: 'center', // Center content horizontally
-    boxSizing: 'border-box', // Include padding and border in the element's total width and height
-    overflow: 'hidden', // Prevent overflow
-    cursor: 'pointer',
-  };
-
   const handleDrop = useCallback(event => {
     event.preventDefault();
     event.stopPropagation();
@@ -119,7 +62,7 @@ const handleUpload = async () => {
   formData.append('file', file);
 
   try {
-    const response = await fetch('http://localhost:3000/upload', {
+    const response = await fetch('/upload', {
       method: 'POST',
       body: formData,
     });
@@ -136,7 +79,9 @@ const handleUpload = async () => {
 
     if (result.filePath && result.changes) {
       // Assuming result.filePath contains the relative path to the proofread file
-      const proofreadUrl = `${window.location.origin}/${result.filePath}`;
+      //const proofreadUrl = `${window.location.origin}/${result.filePath}`;
+      const proofreadUrl = `http://localhost:3000/${result.filePath}`;
+      console.log('Proofread URL:', proofreadUrl);
       const changesBlob = new Blob([result.changes.join('\n')], { type: 'text/plain' });
       const changesUrl = URL.createObjectURL(changesBlob);
 
@@ -158,75 +103,58 @@ const handleUpload = async () => {
   setIsLoading(false);
 };
 
-
-
-const testFunction = () => {
-  console.log('Test function called');
-};
-
   return (
-    <div style={{
-      textAlign: 'center',
-      fontFamily: 'Roboto, Arial, sans-serif',
-      backgroundColor: '#001233',
-      color: 'white',
-      padding: '20px',
-      width: '100vw',
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%'
-      }}>
-        <div style={dropAreaStyle} onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
+    <div className="appContainer">
+      <div className="flexColumnCenter">
+        <div 
+          className={`dropArea ${dragging ? 'dropAreaDragging' : 'dropAreaNormal'}`} 
+          onDrop={handleDrop} 
+          onDragOver={handleDragOver} 
+          onDragLeave={handleDragLeave}
+        >
           Drag and drop a file here
         </div>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%',
-          maxWidth: dropAreaStyle.width,
-          position: 'relative',
-        }}>
-          <label htmlFor="fileInput" style={labelStyle}>
+        <div className="flexRowSpaceBetween">
+          <label htmlFor="fileInput" className="label">
             Choose File
           </label>
-          <input ref={fileInputRef} id="fileInput" type="file" onChange={handleFileChange} style={{ display: 'none', width: 0, height: 0 }}/>
-         <button onClick={handleUpload} disabled={!file || isUploaded} style={!file || isUploaded ? disabledButtonStyle : buttonStyle}>
+          <input 
+            ref={fileInputRef} 
+            id="fileInput" 
+            type="file" 
+            onChange={handleFileChange} 
+            className="hiddenInput"
+          />
+          <button 
+            onClick={handleUpload}
+            className={!file || isUploaded ? 'disabledButton' : 'button'}
+          >
             Upload File
           </button>
-          <button onClick={handleReset} disabled={!file} style={!file ? disabledResetButtonStyle : resetButtonStyle}>
+          <button 
+            onClick={handleReset} 
+            disabled={!file} 
+            className={!file ? 'disabledResetButton' : 'resetButton'}
+          >
             Reset
           </button>
         </div>
       </div>
       {isLoading && (
-        <div style={{ margin: '20px' }}>
+        <div className="loadingContainer">
           <div className="spinner"></div>
           <p>Loading...</p>
         </div>
       )}
-      {file && !isUploaded && <p style={{ marginTop: '10px' }}>File ready to upload: {fileName}</p>}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '20px',
-        marginTop: '10px'
-      }}>
-        {proofreadFileUrl && (
-          <a href={proofreadFileUrl} download="proofread.txt" style={{ color: 'white' }}>
-            Download Proofread File
-          </a>
+      {file && !isUploaded && <p className="fileStatus">File ready to upload: {fileName}</p>}
+      <div className="downloadLinksContainer">
+      {proofreadFileUrl && (
+        <a href={proofreadFileUrl} download={`proofread_${fileName ? fileName.replace(/\.[^/.]+$/, ".txt") : 'file.txt'}`} className="downloadLink">
+          Download Proofread File
+        </a>
         )}
         {changesFileUrl && (
-          <a href={changesFileUrl} download="changes.txt" style={{ color: 'white' }}>
+          <a href={changesFileUrl} download="changes.txt" className="downloadLink">
             Download Changes File
           </a>
         )}

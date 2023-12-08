@@ -28,6 +28,21 @@
   color: #61dafb;
 }
 
+.appContainer {
+  text-align: center;
+  font-family: 'Roboto, Arial, sans-serif';
+  background-color: #001233;
+  color: white;
+  padding: 20px;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
 .spinner {
   border: 4px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
@@ -50,3 +65,130 @@
     transform: rotate(360deg);
   }
 }
+
+.dropArea {
+  border: 2px dashed white;
+  padding: 20px;
+  margin: 20px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  width: 60vw;
+  height: 60vh;
+  display: flex;
+  flexDirection: column;
+  justifyContent: center;
+  alignItems: center;
+}
+
+/* Add a separate class for the dragging state */
+.dropAreaDragging {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dropAreaNormal {
+  background-color: transparent;
+}
+
+.button, .resetButton, .disabledButton, .disabledResetButton {
+  background-color: white;
+  color: navy;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 150px;
+  height: 40px;
+}
+
+/* Add hover effects for enabled buttons */
+.button:hover, .resetButton:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.resetButton {
+  background-color: #CC0000;
+  color: white;
+  /* ... other styles (same as .button) ... */
+}
+
+.disabledResetButton {
+  background-color: #FFCCCC; /* Lighter red tint */
+  color: #A0A0A0; /* Grey text */
+}
+
+/* Style for disabled buttons */
+.disabledButton, .disabledResetButton {
+  cursor: not-allowed;
+  opacity: 0.7; /* Slightly faded to indicate disabled state */
+}
+
+.label {
+  background-color: white;
+  color: navy;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 150px;
+  height: 40px;
+}
+
+.label:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+
+.flexColumnCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.flexRowSpaceBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 60%;
+}
+
+.hiddenInput {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.loadingContainer {
+  margin: 20px;
+  /* Add additional styling for the loading container if needed */
+}
+
+.fileStatus {
+  margin-top: 10px;
+  /* Add additional styling for the file status text if needed */
+}
+
+.downloadLinksContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.downloadLink {
+  color: white;
+  /* Add additional styling for download links if needed */
+}
+
