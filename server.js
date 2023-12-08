@@ -32,8 +32,6 @@ async function extractTextFromFile(file) {
     throw new Error('Unsupported file type');
 }
 
-// processText is called directly in teh /upload route
-// processText then calls spellCheck, which then calls applyCorrection
 // Function to process the text and apply corrections
 async function processText(text) {
     let changes = [];
@@ -41,19 +39,32 @@ async function processText(text) {
 
     const correctedSentences = await Promise.all(sentences.map(async (sentence, index) => {
         const correctedSentence = await spellCheck(sentence);
-        console.log("Original Sentence: ", sentence);
-        console.log("Corrected Sentence: ", correctedSentence);
+
         if (correctedSentence !== sentence) {
-            changes.push(`Sentence ${index + 1} corrected.`);
+            // Record the original and corrected sentences
+            changes.push({
+                original: sentence,
+                corrected: correctedSentence,
+                index: index + 1 // Keep track of sentence number for reference
+            });
         }
         return correctedSentence;
     }));
 
+    // Combine the corrected sentences into a single text
+    const correctedText = correctedSentences.join(' ');
+
+    // Format changes for output
+    const changesText = changes.map(change => 
+        `Original (Sentence ${change.index}): "${change.original}"\nCorrected: "${change.corrected}"\n`
+    ).join('\n');
+
     return {
-        correctedText: correctedSentences.join(' '),
-        changes: changes
+        correctedText: correctedText,
+        changesText: changesText // Return the formatted changes text
     };
 }
+
 
 // Function to call the Bing Spell Check API
 async function spellCheck(text) {
@@ -109,7 +120,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
         // Replace the file extension with .txt
         const baseFileName = file.originalname.replace(/\.[^/.]+$/, "");
-        const outputFilePath = `uploads/proofread_${baseFileName}.txt`;
+        const outputFilePath = `uploads/proofed_${baseFileName}.txt`;
         console.log("File path:", outputFilePath); // Log the file path
 
         // Saving the proofread text as a .txt file
@@ -124,7 +135,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         res.send({ 
             fileType: 'txt', 
             filePath: outputFilePath, 
-            changes: result.changes 
+            changes: result.changesText
         });
     } catch (error) {
         console.error('Error processing file:', error);

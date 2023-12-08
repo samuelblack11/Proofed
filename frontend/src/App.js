@@ -77,34 +77,37 @@ const handleUpload = async () => {
     const result = await response.json(); // Read the response body
     console.log('Response from server:', result); // Debugging the response
 
-    if (result.filePath && result.changes) {
-      // Assuming result.filePath contains the relative path to the proofread file
-      //const proofreadUrl = `${window.location.origin}/${result.filePath}`;
+    // Handle proofread file URL
+    if (result.filePath) {
       const proofreadUrl = `http://localhost:3000/${result.filePath}`;
       console.log('Proofread URL:', proofreadUrl);
-      const changesBlob = new Blob([result.changes.join('\n')], { type: 'text/plain' });
-      const changesUrl = URL.createObjectURL(changesBlob);
-
-      console.log('Proofread URL:', proofreadUrl); // Debugging the URL
-      console.log('Changes URL:', changesUrl); // Debugging the URL
-
       setProofreadFileUrl(proofreadUrl);
-      setChangesFileUrl(changesUrl);
-      setIsUploaded(true);
-    } else {
-      console.error('Missing data in response');
-      setIsUploaded(false);
     }
+
+    // Handle changes file URL
+    if (result.changes) {
+      const changesBlob = new Blob([result.changes], { type: 'text/plain' });
+      const changesUrl = URL.createObjectURL(changesBlob);
+      console.log('Changes URL:', changesUrl);
+      setChangesFileUrl(changesUrl);
+    }
+
+    setIsUploaded(result.filePath ? true : false);
   } catch (error) {
     console.error('Error during file upload:', error);
     setIsUploaded(false);
+  } finally {
+    setIsLoading(false);
   }
-
-  setIsLoading(false);
 };
+
 
   return (
     <div className="appContainer">
+      <h1 className="appTitle">Proofed</h1> {/* Title */}
+      <p className="appDescription">
+        A simple tool to proofread and correct your documents. Drag and drop or select a file to get started.
+      </p>
       <div className="flexColumnCenter">
         <div 
           className={`dropArea ${dragging ? 'dropAreaDragging' : 'dropAreaNormal'}`} 
@@ -149,7 +152,7 @@ const handleUpload = async () => {
       {file && !isUploaded && <p className="fileStatus">File ready to upload: {fileName}</p>}
       <div className="downloadLinksContainer">
       {proofreadFileUrl && (
-        <a href={proofreadFileUrl} download={`proofread_${fileName ? fileName.replace(/\.[^/.]+$/, ".txt") : 'file.txt'}`} className="downloadLink">
+        <a href={proofreadFileUrl} download={`proofed_${fileName ? fileName.replace(/\.[^/.]+$/, ".txt") : 'file.txt'}`} className="downloadLink">
           Download Proofread File
         </a>
         )}
