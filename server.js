@@ -9,6 +9,7 @@ const natural = require('natural');
 const path = require('path');
 const upload = multer({ dest: 'uploads/' });
 const app = express();
+const config = require('../config'); // Adjust the path as necessary
 app.use(cors());
 //app.use('/uploads', express.static('uploads'));
 app.use('/uploads', (req, res, next) => {
@@ -68,7 +69,7 @@ async function processText(text) {
 
 // Function to call the Bing Spell Check API
 async function spellCheck(text) {
-    const apiKey = '914f67dcba874566ab43525560bf103c'; // Replace with your Bing API Key
+    const apiKey = config.bingApiKey
     const endpoint = 'https://api.bing.microsoft.com/v7.0/spellcheck/';
 
     try {
