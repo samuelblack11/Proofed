@@ -1,3 +1,4 @@
+require('dotenv').config({ path: 'azureCreds.env' });
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
@@ -9,7 +10,17 @@ const natural = require('natural');
 const path = require('path');
 const upload = multer({ dest: 'uploads/' });
 const app = express();
-const config = require('../config'); // Adjust the path as necessary
+const { DefaultAzureCredential } = require('@azure/identity');
+const credential = new DefaultAzureCredential({
+  clientId: process.env.AZURE_CLIENT_ID,
+  tenantId: process.env.AZURE_TENANT_ID,
+  clientSecret: process.env.AZURE_CLIENT_SECRET,
+});
+const { SecretClient } = require('@azure/keyvault-secrets');
+const keyVaultName = "SalooKeys";
+const keyVaultUrl = `https://${keyVaultName}.vault.azure.net/`;
+const client = new SecretClient(keyVaultUrl, credential);
+
 app.use(cors());
 //app.use('/uploads', express.static('uploads'));
 app.use('/uploads', (req, res, next) => {
@@ -69,7 +80,9 @@ async function processText(text) {
 
 // Function to call the Bing Spell Check API
 async function spellCheck(text) {
-    const apiKey = config.bingApiKey
+    const secretName = "BingSpellCheck2";
+    const apiKeySecret = await client.getSecret(secretName);
+    const apiKey = apiKeySecret.value;
     const endpoint = 'https://api.bing.microsoft.com/v7.0/spellcheck/';
 
     try {
