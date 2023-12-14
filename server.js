@@ -30,7 +30,7 @@ app.use('/uploads', (req, res, next) => {
 });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
+//
 const sentenceTokenizer = new natural.SentenceTokenizer();
 
 // Function to extract text from a file
