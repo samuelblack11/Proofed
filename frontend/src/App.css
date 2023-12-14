@@ -210,3 +210,47 @@
   /* Add additional styling for download links if needed */
 }
 
+
+/* Responsive styles for mobile */
+@media only screen and (max-width: 768px) {
+
+  .appContainer {
+    height: auto;
+  }
+
+  .appDescription {
+    width: 80%;
+  }
+
+  .dropArea {
+    width: 80vw;
+    height: 30vh;
+  }
+
+  .flexRowSpaceBetween {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .button, .resetButton, .label {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .downloadLinksContainer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Adjust font sizes and other styles as needed for smaller screens */
+  .appTitle {
+    font-size: 2em; /* Slightly smaller title font size */
+  }
+
+  .appDescription, .button, .resetButton, .label, .dropArea {
+    font-size: 1em; /* Adjust font size for readability on smaller screens */
+  }
+
+}
+
