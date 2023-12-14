@@ -10,6 +10,7 @@ const natural = require('natural');
 const path = require('path');
 const upload = multer({ dest: 'uploads/' });
 const app = express();
+app.use(express.static(path.join(__dirname, './frontend/build/')));
 const { DefaultAzureCredential } = require('@azure/identity');
 const credential = new DefaultAzureCredential({
   clientId: process.env.AZURE_CLIENT_ID,
