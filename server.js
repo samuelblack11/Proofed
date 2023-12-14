@@ -21,7 +21,7 @@ const { SecretClient } = require('@azure/keyvault-secrets');
 const keyVaultName = "SalooKeys";
 const keyVaultUrl = `https://${keyVaultName}.vault.azure.net/`;
 const client = new SecretClient(keyVaultUrl, credential);
-
+const port = process.env.PORT || 8080;
 app.use(cors());
 //app.use('/uploads', express.static('uploads'));
 app.use('/uploads', (req, res, next) => {
@@ -158,5 +158,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
