@@ -232,6 +232,9 @@
     margin-top: 1em; /* Add some space above the button area */
   }
 
+ .button, .resetButton, .label {
+    margin-bottom: 10px; /* Ensure space between each button/label */
+  }
 
   .downloadLinksContainer {
     flex-direction: column; /* Stack download links vertically */

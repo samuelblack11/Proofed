@@ -120,7 +120,7 @@ const handleUpload = async () => {
     <div className="appContainer">
       <h1 className="appTitle">Proofed</h1> {/* Title */}
       <p className="appDescription">
-         A simple tool to proofread and correct your documents. {isMobileView ? "Select a file to get started." : "Drag and drop or select a file to get started."}
+         A simple tool to proofread and correct your documents (docx or pdf only). {isMobileView ? "Select a file to get started." : "Drag and drop or select a file to get started."}
       </p>
       <div className="flexColumnCenter">
         <div 
