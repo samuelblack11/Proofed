@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef} from 'react';
+import React, { useState, useCallback, useRef, useEffect} from 'react';
 import './App.css';
 
 function App() {
@@ -10,6 +10,20 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
   const fileInputRef = useRef(null); // Reference for the file input
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 600);
+    };
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Clean up event listener
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   const handleReset = () => {
     setFile(null);
@@ -106,11 +120,11 @@ const handleUpload = async () => {
     <div className="appContainer">
       <h1 className="appTitle">Proofed</h1> {/* Title */}
       <p className="appDescription">
-        A simple tool to proofread and correct your documents. Drag and drop or select a file to get started.
+         A simple tool to proofread and correct your documents. {isMobileView ? "Select a file to get started." : "Drag and drop or select a file to get started."}
       </p>
       <div className="flexColumnCenter">
         <div 
-          className={`dropArea ${dragging ? 'dropAreaDragging' : 'dropAreaNormal'}`} 
+          className={`dropArea ${dragging ? 'dropAreaDragging' : 'dropAreaNormal'} ${isMobileView ? 'hide' : ''}`} 
           onDrop={handleDrop} 
           onDragOver={handleDragOver} 
           onDragLeave={handleDragLeave}
