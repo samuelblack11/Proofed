@@ -252,19 +252,10 @@
 
   .dropArea {
     width: 70vw; /* Further reduce width for smaller screens */
-    height: 15vh; /* Further reduce height for smaller screens */
+    height: 15vh !important; /* Further reduce height for smaller screens */
     font-size: 14px; /* Smaller font size for text within the drop area */
     padding: 5px; /* Reduce padding to save space */
     margin: 10px; /* Reduce margin to align with the overall layout */
-  }
-
-  /* Adjust font sizes and other styles as needed for smaller screens */
-  .appTitle {
-    font-size: 2em; /* Slightly smaller title font size */
-  }
-
-  .appDescription, .button, .resetButton, .label, .dropArea {
-    font-size: 1em; /* Adjust font size for readability on smaller screens */
   }
 
 }
