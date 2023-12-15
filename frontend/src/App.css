@@ -221,13 +221,8 @@
 @media (max-width: 600px) {
 
   .appTitle {
-    font-size: 1.2em !important;
+    font-size: 1.2em;
     margin-bottom: 0.3em; /* Reduce the bottom margin to save vertical space */
-  }
-
-  .appDescription {
-    font-size: 0.9em; /* Adjust font size as needed */
-    content: "A simple tool to proofread and correct your documents. Select a file to get started."; /* Change text for mobile */
   }
 
   .flexRowSpaceBetween {
@@ -237,10 +232,6 @@
     margin-top: 1em; /* Add some space above the button area */
   }
 
-  .button, .resetButton, .label {
-    width: 100%; /* Full-width buttons on mobile */
-    padding: 8px 0; /* Adjust padding for a better fit */
-  }
 
   .downloadLinksContainer {
     flex-direction: column; /* Stack download links vertically */
@@ -248,7 +239,11 @@
   }
   
   .appContainer {
-    height: auto;
+    height: 100vh; /* Use 100% of the viewport height */
+    width: 100vw; /* Full viewport width */
+    justify-content: flex-start; /* Align content to the start of the container */
+    padding: 10px; /* Adjust as needed */
+    box-sizing: border-box; /* Include padding in width calculation */
   }
 
   .dropArea {
