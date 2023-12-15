@@ -102,7 +102,7 @@ const handleUpload = async () => {
 
     // Handle proofread file URL
     if (result.filePath) {
-      const proofreadUrl = `http://localhost:3000/${result.filePath}`;
+      const proofreadUrl = `http://localhost:8080/${result.filePath}`;
       setProofreadFileUrl(proofreadUrl);
     }
 

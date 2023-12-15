@@ -114,7 +114,15 @@ async function spellCheck(text) {
     if (axios.isAxiosError(error)) {
         console.error('Axios Error:', error.message);
         if (error.response) {
-            errorMessage += `: Status ${error.response.status} - ${error.response.data}`;
+            // Log more details from the response
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+            console.error('Response data:', error.response.data);
+            
+            // Append more details to the error message
+            errorMessage += `: Status ${error.response.status}`;
+            errorMessage += ` - Data: ${JSON.stringify(error.response.data)}`;
+            errorMessage += ` - Headers: ${JSON.stringify(error.response.headers)}`;
         } else {
             errorMessage += ': Request failed without a response';
         }
@@ -123,6 +131,7 @@ async function spellCheck(text) {
     }
     throw new Error(errorMessage);
 }
+
 }
 
 
