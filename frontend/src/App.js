@@ -11,6 +11,7 @@ function App() {
   const [isUploaded, setIsUploaded] = useState(false);
   const fileInputRef = useRef(null); // Reference for the file input
   const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 600);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,13 +37,18 @@ function App() {
 
 const handleFileChange = event => {
   const selectedFile = event.target.files[0];
-  console.log('Selected file:', selectedFile); // Add this line to log the selected file
-  setFile(selectedFile);
-  setFileName(selectedFile ? selectedFile.name : '');
-  setIsUploaded(false);
-  setProofreadFileUrl('');
-  setChangesFileUrl('');
+  if (selectedFile && (selectedFile.type === "application/pdf" || selectedFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+    setFile(selectedFile);
+    setFileName(selectedFile ? selectedFile.name : '');
+    setIsUploaded(false);
+    setProofreadFileUrl('');
+    setChangesFileUrl('');
+    setErrorMessage(''); // Clear any previous error messages
+  } else {
+    setErrorMessage('Please select a valid .docx or .pdf file.');
+  }
 };
+
 
   const handleDrop = useCallback(event => {
     event.preventDefault();
@@ -68,6 +74,10 @@ const handleFileChange = event => {
   }, []);
 
 const handleUpload = async () => {
+  if (!file || isUploaded) {
+    return;
+  }
+
   console.log("---------");
   console.log('handleUpload triggered');
   setIsLoading(true);
@@ -81,20 +91,17 @@ const handleUpload = async () => {
       body: formData,
     });
 
-    console.log('Response Status:', response.status); // Log the status code
-    console.log('Response Status Text:', response.statusText); // Log the status text
-
     if (!response.ok) {
-      throw new Error(`Server responded with status: ${response.status}`);
+      const errorResponse = await response.json(); // Read the error response body
+      throw new Error(errorResponse.errorMessage || `Server responded with status: ${response.status}`);
     }
 
-    const result = await response.json(); // Read the response body
-    console.log('Response from server:', result); // Debugging the response
+    const result = await response.json(); // Read the successful response body
+    console.log('Response from server:', result);
 
     // Handle proofread file URL
     if (result.filePath) {
       const proofreadUrl = `http://localhost:3000/${result.filePath}`;
-      console.log('Proofread URL:', proofreadUrl);
       setProofreadFileUrl(proofreadUrl);
     }
 
@@ -102,7 +109,6 @@ const handleUpload = async () => {
     if (result.changes) {
       const changesBlob = new Blob([result.changes], { type: 'text/plain' });
       const changesUrl = URL.createObjectURL(changesBlob);
-      console.log('Changes URL:', changesUrl);
       setChangesFileUrl(changesUrl);
     }
 
@@ -110,10 +116,12 @@ const handleUpload = async () => {
   } catch (error) {
     console.error('Error during file upload:', error);
     setIsUploaded(false);
+    setErrorMessage(error.message); // Set the error message state to display to the user
   } finally {
     setIsLoading(false);
   }
 };
+
 
 
   return (
@@ -139,7 +147,8 @@ const handleUpload = async () => {
             ref={fileInputRef} 
             id="fileInput" 
             type="file" 
-            onChange={handleFileChange} 
+            onChange={handleFileChange}
+            accept=".docx, .pdf" 
             className="hiddenInput"
           />
           <button 
@@ -176,6 +185,7 @@ const handleUpload = async () => {
           </a>
         )}
       </div>
+      {errorMessage && <p className="errorMessage">{errorMessage}</p>}
     </div>
   );
 }

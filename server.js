@@ -79,7 +79,6 @@ async function processText(text) {
 }
 
 
-// Function to call the Bing Spell Check API
 async function spellCheck(text) {
     const secretName = "BingSpellCheck2";
     const apiKeySecret = await client.getSecret(secretName);
@@ -98,6 +97,12 @@ async function spellCheck(text) {
         };
 
         const response = await axios.post(endpoint, params.toString(), { headers });
+
+        // Check if response is successful
+        if (!response.ok) {
+            throw new Error('Error with the Bing Spell Check API');
+        }
+
         const flaggedTokens = response.data.flaggedTokens;
         let correctedText = text;
 
@@ -112,9 +117,10 @@ async function spellCheck(text) {
         return correctedText;
     } catch (error) {
         console.error('Error calling Bing Spell Check API:', error);
-        return text;
+        throw error; // Rethrow the error to be handled by the caller
     }
 }
+
 
 // Function to apply individual corrections
 function applyCorrection(text, offset, original, replacement) {
@@ -154,9 +160,11 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         });
     } catch (error) {
         console.error('Error processing file:', error);
-        res.status(500).send('Error processing file');
+        // Send a more specific error message
+        res.status(500).send({ errorMessage: 'Error processing file: ' + error.message });
     }
 });
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -215,6 +215,10 @@
   display: none;
 }
 
+.errorMessage {
+  color: red;
+  margin-top: 10px;
+}
 
 /* Responsive styles for mobile */
 /* @media only screen and (max-width: 600px) {*/
