@@ -214,6 +214,10 @@
 /* Responsive styles for mobile */
 @media only screen and (max-width: 600px) {
 
+      body {
+        background-color: yellow;
+    }
+
   .appTitle {
     font-size: 1.2em; /* Reduce the font size for the title */
     margin-bottom: 0.3em; /* Reduce the bottom margin to save vertical space */
