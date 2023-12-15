@@ -219,7 +219,7 @@
     }
 
   .appTitle {
-    font-size: 1.2em; /* Reduce the font size for the title */
+    font-size: 1.2em !important;
     margin-bottom: 0.3em; /* Reduce the bottom margin to save vertical space */
   }
 
