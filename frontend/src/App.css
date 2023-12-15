@@ -214,12 +214,36 @@
 /* Responsive styles for mobile */
 @media only screen and (max-width: 600px) {
 
-  .appContainer {
-    height: auto;
+  .appTitle {
+    font-size: 1.2em; /* Reduce the font size for the title */
+    margin-bottom: 0.3em; /* Reduce the bottom margin to save vertical space */
   }
 
   .appDescription {
-    width: 80%;
+    font-size: 0.9em; /* Reduce the font size for the description */
+    margin-bottom: 1em; /* Adjust bottom margin */
+  }
+
+  .flexRowSpaceBetween {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center;
+    width: 80%; /* Reduce width to prevent horizontal overflow */
+    margin-top: 1em; /* Add some space above the button area */
+  }
+
+  .button, .resetButton, .label {
+    width: 100%; /* Full-width buttons on mobile */
+    margin-top: 0.5em; /* Add space between stacked elements */
+    padding: 8px 0; /* Adjust padding for a better fit */
+  }
+
+  .downloadLinksContainer {
+    flex-direction: column; /* Stack download links vertically */
+    gap: 0.5em; /* Adjust gap between links */
+  }
+  
+  .appContainer {
+    height: auto;
   }
 
   .dropArea {
@@ -228,22 +252,6 @@
     font-size: 14px; /* Smaller font size for text within the drop area */
     padding: 5px; /* Reduce padding to save space */
     margin: 10px; /* Reduce margin to align with the overall layout */
-  }
-
-  .flexRowSpaceBetween {
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-
-  .button, .resetButton, .label {
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  .downloadLinksContainer {
-    flex-direction: column;
-    gap: 10px;
   }
 
   /* Adjust font sizes and other styles as needed for smaller screens */
