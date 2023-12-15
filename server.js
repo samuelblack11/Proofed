@@ -80,11 +80,10 @@ async function processText(text) {
 
 
 async function spellCheck(text) {
-    const secretName = "BingSpellCheck2";
+    const secretName = "BingSpellCheck3";
     const apiKeySecret = await client.getSecret(secretName);
     const apiKey = apiKeySecret.value;
     const endpoint = 'https://api.bing.microsoft.com/v7.0/spellcheck/';
-
     try {
         const params = new URLSearchParams({ 
             'text': text,
@@ -98,11 +97,6 @@ async function spellCheck(text) {
 
         const response = await axios.post(endpoint, params.toString(), { headers });
 
-        // Check if response is successful
-        if (!response.ok) {
-            throw new Error('Error with the Bing Spell Check API');
-        }
-
         const flaggedTokens = response.data.flaggedTokens;
         let correctedText = text;
 
@@ -115,10 +109,20 @@ async function spellCheck(text) {
         });
 
         return correctedText;
-    } catch (error) {
-        console.error('Error calling Bing Spell Check API:', error);
-        throw error; // Rethrow the error to be handled by the caller
+} catch (error) {
+    let errorMessage = 'Error with the Bing Spell Check API';
+    if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.message);
+        if (error.response) {
+            errorMessage += `: Status ${error.response.status} - ${error.response.data}`;
+        } else {
+            errorMessage += ': Request failed without a response';
+        }
+    } else {
+        console.error('Non-Axios Error:', error.message);
     }
+    throw new Error(errorMessage);
+}
 }
 
 

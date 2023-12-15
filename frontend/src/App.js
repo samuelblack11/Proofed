@@ -33,6 +33,7 @@ function App() {
     setProofreadFileUrl('');
     setChangesFileUrl('');
     fileInputRef.current.value = ''; // Reset the file input
+    setErrorMessage('');
   };
 
 const handleFileChange = event => {
