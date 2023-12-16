@@ -4,10 +4,7 @@ Proofed is a proofreading application which allows users to easily spell check d
 
 **Live App:** [Click here to try Proofed](https://proofed.azurewebsites.net)
 
-<div>
-  <img src="/assets/Proofed_homepage.png" alt="Proofed homepage" style="max-height: 300px;"/>
-  <img src="/assets/mobile.png" alt="Proofed mobile view" style="max-height: 300px;"/> 
+<div style="display: flex; justify-content: center;">
+  <img src="/assets/Proofed_homepage.png" alt="Proofed homepage" style="height: 250px; width: 250px; margin-right: 10px;"/>
+  <img src="/assets/mobile.png" alt="Proofed mobile view" style="height: 250px; width: 250px;"/>
 </div>
-
-
-# Proofed
