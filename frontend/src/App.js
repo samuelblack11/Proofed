@@ -117,7 +117,12 @@ const handleUpload = async () => {
   } catch (error) {
     console.error('Error during file upload:', error);
     setIsUploaded(false);
-    setErrorMessage(error.message); // Set the error message state to display to the user
+    if (error.message.includes('Spell Check API Error')) {
+    setErrorMessage('There was an error with the spell checking service. Please try again later.');
+    } else {
+    setErrorMessage('An error occurred during the file upload. Please check your file and try again.');
+    }
+
   } finally {
     setIsLoading(false);
   }

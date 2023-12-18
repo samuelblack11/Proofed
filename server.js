@@ -42,7 +42,7 @@ async function extractTextFromFile(file) {
         const data = await mammoth.extractRawText({ path: file.path });
         return data.value;
     }
-    throw new Error('Unsupported file type');
+    throw new Error('Unsupported file type. Please upload a PDF or DOCX file.');
 }
 
 // Function to process the text and apply corrections
@@ -118,13 +118,10 @@ async function spellCheck(text) {
             console.error('Response status:', error.response.status);
             console.error('Response headers:', error.response.headers);
             console.error('Response data:', error.response.data);
-            
-            // Append more details to the error message
-            errorMessage += `: Status ${error.response.status}`;
-            errorMessage += ` - Data: ${JSON.stringify(error.response.data)}`;
-            errorMessage += ` - Headers: ${JSON.stringify(error.response.headers)}`;
+            throw new Error(`Spell Check API Error: ${error.response.data.error.message}`);
+
         } else {
-            errorMessage += ': Request failed without a response';
+            throw new Error('Spell Check API is currently unavailable. Please try again later.');
         }
     } else {
         console.error('Non-Axios Error:', error.message);
@@ -174,7 +171,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     } catch (error) {
         console.error('Error processing file:', error);
         // Send a more specific error message
-        res.status(500).send({ errorMessage: 'Error processing file: ' + error.message });
+        res.status(500).send({ errorMessage: 'Failed to process the file. Please ensure the file format is correct and try again.' });
     }
 });
 
